@@ -1,0 +1,30 @@
+# Smithery configuration for the getyoutubetranscript.com MCP server
+# https://smithery.ai
+#
+# This MCP is a remote server hosted at https://getyoutubetranscript.com/api/mcp.
+# Smithery users can connect directly to the remote endpoint - no local install required.
+
+startCommand:
+  type: http
+  url: https://getyoutubetranscript.com/api/mcp
+  description: >-
+    YouTube transcripts + YouTube search MCP for AI agents. Six tools -
+    transcript extraction, video/channel search, channel browsing, in-channel
+    search, and playlist extraction. Authenticate via API key (Bearer token).
+
+metadata:
+  homepage: https://getyoutubetranscript.com
+  documentation: https://getyoutubetranscript.com/docs
+  tags:
+    - youtube
+    - youtube-transcript
+    - youtube-search
+    - transcript
+    - transcripts
+    - subtitles
+    - captions
+    - video
+    - playlist
+    - channel
+    - ai-agents
+    - remote-mcp
