@@ -1,0 +1,88 @@
+{
+  "identifier": "tubeagentkit-youtube-transcript",
+  "name": "YouTube Transcript + YouTube Search MCP",
+  "description": "YouTube transcripts, video/channel search, channel browsing, and playlist extraction for AI agents, via the hosted getyoutubetranscript.com MCP server. API-key or OAuth auth, free tier, no card required.",
+  "version": "1.0.0",
+  "author": "TubeAgentKit",
+  "authorUrl": "https://github.com/tubeagentkit",
+  "homepage": "https://github.com/tubeagentkit/youtube-mcp",
+  "cloudEndpoint": "https://getyoutubetranscript.com/api/mcp",
+  "category": "developer",
+  "tags": ["youtube", "transcript", "captions", "subtitles", "video-search", "channel-search", "playlists"],
+  "tools": [
+    {
+      "name": "get_youtube_transcript",
+      "description": "Fetch the full transcript for a YouTube video, plus its title/author/thumbnail metadata. Returns the complete spoken text as one block - this API does not provide per-segment timestamps, so don't ask for or expect a timestamped breakdown.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "video_url": { "type": "string", "description": "YouTube URL (full or short) or an 11-character video ID" },
+          "language": { "type": "string", "description": "Language code, e.g. 'en', 'es'. Defaults to 'en'." },
+          "send_metadata": { "type": "boolean", "description": "Include title/author/thumbnail metadata. Defaults to true." }
+        },
+        "required": ["video_url"]
+      }
+    },
+    {
+      "name": "search_youtube",
+      "description": "Search YouTube for videos or channels. Paginate with `continuation` from a previous response.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "description": "Search query. Required unless `continuation` is set." },
+          "search_type": { "type": "string", "enum": ["video", "channel"], "description": "'video' (default) or 'channel'." },
+          "continuation": { "type": "string", "description": "Opaque token from a previous response - fetches the next page. Do not construct this yourself." }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "get_channel_latest_videos",
+      "description": "Get a channel's metadata plus its most recent uploads. Free - no credits charged.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "channel": { "type": "string", "description": "Channel @handle, URL, or UC... id" }
+        },
+        "required": ["channel"]
+      }
+    },
+    {
+      "name": "search_channel_videos",
+      "description": "Search within one channel's videos for a query. Paginate with `continuation` from a previous response.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "channel": { "type": "string", "description": "Channel @handle, URL, or UC... id. Required unless `continuation` is set." },
+          "query": { "type": "string", "description": "Query to search within the channel. Required unless `continuation` is set." },
+          "continuation": { "type": "string", "description": "Opaque token from a previous response - fetches the next page." }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "list_channel_videos",
+      "description": "List every video a channel has uploaded (the /videos tab), paginated. Paginate with `continuation` from a previous response.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "channel": { "type": "string", "description": "Channel @handle, URL, or UC... id. Required unless `continuation` is set." },
+          "continuation": { "type": "string", "description": "Opaque token from a previous response - fetches the next page." }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "list_playlist_videos",
+      "description": "Get every video in a YouTube playlist, paginated. Paginate with `continuation` from a previous response.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "playlist": { "type": "string", "description": "Playlist URL or id. Required unless `continuation` is set." },
+          "continuation": { "type": "string", "description": "Opaque token from a previous response - fetches the next page." }
+        },
+        "required": []
+      }
+    }
+  ]
+}
