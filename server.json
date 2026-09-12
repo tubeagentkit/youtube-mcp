@@ -1,8 +1,8 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.getyoutubetranscript/youtube-transcript-and-youtube-search",
   "title": "YouTube Transcript + YouTube Search MCP",
-  "description": "Fetch YouTube transcripts, search YouTube videos and channels, browse channel uploads, and list playlist videos - for AI agents. Free tier, no card required.",
+  "description": "YouTube transcripts, search, channel browsing, and playlists for AI agents via MCP.",
   "version": "1.0.0",
   "repository": {
     "url": "https://github.com/tubeagentkit/youtube-mcp",
