@@ -397,6 +397,33 @@ Back off and retry after a short delay — don't hammer it in a tight loop.
 
 ---
 
+## Verification
+
+This repo ships manifests (`server.json`, `smithery.yaml`, `mcp.json`, etc.) rather than
+server source, because the server itself is a hosted, remote endpoint — the implementation
+lives in the main product's codebase, the same way a REST API's server code doesn't live in
+its OpenAPI-spec repo. To make that verifiable rather than just asserted:
+
+- **Run [`verify.js`](./verify.js) yourself** — zero dependencies, zero auth required:
+  ```sh
+  node verify.js
+  ```
+  It performs the real MCP handshake (`initialize` then `tools/list`) against the live
+  endpoint and prints the server's actual response, including all 6 real tool schemas.
+  Tool *discovery* is public; only tool *calls* require an API key or OAuth token (see
+  [Authentication](#authentication)).
+- **Independently verified by four third-party MCP directories**, each of which connected
+  to the live endpoint and confirmed the tools themselves (not just took our word for it):
+  - [Official MCP Registry](https://registry.modelcontextprotocol.io/v0/servers?search=getyoutubetranscript) — `com.getyoutubetranscript/youtube-transcript-and-youtube-search`, published via domain-ownership-verified HTTP `mcp-publisher`
+  - [Smithery](https://smithery.ai/server/@tubeagentkit/youtube-transcript) — its own scanner connected and discovered all 6 tools
+  - [Glama](https://glama.ai/mcp/servers/tubeagentkit/youtube-mcp)
+  - [LobeHub](https://market.lobehub.com/s/plugins/tubeagentkit-youtube-transcript)
+- **Live since 2026-09-12** — the OAuth 2.1 (DCR + CIMD) flow has also been exercised
+  end-to-end by a real third-party client (Smithery) connecting via CIMD, which surfaced
+  and got a real interop fix along the way (see commit history).
+
+---
+
 ## Also available as a REST API
 
 Building an app instead of an agent? The same backend is a plain JSON REST API — see the [Agent Skill repo](https://github.com/tubeagentkit/youtube-transcript-skills) for the full endpoint reference, or the [dashboard](https://getyoutubetranscript.com/dashboard) to get a key directly.
