@@ -1,4 +1,4 @@
-# YouTube Transcript + Search MCP 🎬
+# YouTube MCP Server: Transcripts, Search, Channels & Playlists 🎬
 
 [![License](https://img.shields.io/badge/License-MIT-4CAF50?style=for-the-badge)](./LICENSE)
 [![Website](https://img.shields.io/badge/Website-getyoutubetranscript.com-FF3B00?style=for-the-badge)](https://getyoutubetranscript.com)
@@ -476,6 +476,15 @@ Base URL: `https://getyoutubetranscript.com/api/v1`
 ## Disclosure
 
 getyoutubetranscript.com is an independent product and is not affiliated with or endorsed by YouTube or Google.
+
+## Related projects
+
+Other ways to use the [GetYouTubeTranscript API](https://getyoutubetranscript.com):
+
+- [youtube-transcript-skills](https://github.com/tubeagentkit/youtube-transcript-skills): YouTube transcript Agent Skill for Claude Code, Cursor, Codex and OpenClaw
+- [n8n-nodes-getyoutubetranscript](https://github.com/tubeagentkit/n8n-nodes-getyoutubetranscript): n8n community node, also usable as an AI Agent tool
+- [python-sdk](https://github.com/tubeagentkit/python-sdk): YouTube Transcript API SDK for Python
+- [node-sdk](https://github.com/tubeagentkit/node-sdk): YouTube Transcript API SDK for Node.js / TypeScript
 
 ## License
 
