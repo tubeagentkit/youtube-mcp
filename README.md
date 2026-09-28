@@ -5,7 +5,7 @@
 
 > A remote MCP server for YouTube — transcripts, video/channel search, channel browsing, in-channel search, and playlist extraction. API-key **or** OAuth 2.1 sign-in. Free tier, no card required.
 
-Six tools, one hosted endpoint, no local install — for Claude, ChatGPT, Cursor, VS Code, Windsurf, and 15+ other MCP-compatible clients.
+Seven tools, one hosted endpoint, no local install — for Claude, ChatGPT, Cursor, VS Code, Windsurf, and 15+ other MCP-compatible clients.
 
 ```
 https://getyoutubetranscript.com/api/mcp
@@ -233,6 +233,33 @@ The agent calls `get_youtube_transcript` and summarizes the result. If you conne
 
 ---
 
+## Run locally (stdio)
+
+Prefer a local process? [`server/`](./server) is an open-source stdio MCP server with the same 7 tools, built on the official MCP TypeScript SDK. It calls the public [REST API](https://getyoutubetranscript.com/docs) with your API key.
+
+```sh
+git clone https://github.com/tubeagentkit/youtube-mcp
+npm install --prefix youtube-mcp/server
+```
+
+Then point your client at it, e.g. Claude Desktop / Cursor:
+
+```json
+{
+  "mcpServers": {
+    "youtube-transcript": {
+      "command": "node",
+      "args": ["/absolute/path/to/youtube-mcp/server/index.js"],
+      "env": { "GYT_API_KEY": "sk_live_your_key_here" }
+    }
+  }
+}
+```
+
+Live integration test (uses only free tools): `GYT_API_KEY=sk_live_... npm test --prefix server`
+
+---
+
 ## Authentication
 
 ### API Key
@@ -257,7 +284,7 @@ Both methods issue a token scoped and audience-bound to this specific MCP server
 
 ## Available Tools
 
-All six tools are exposed automatically once you connect. **1 credit = 1 successful request.** Failed or rate-limited calls never consume credits.
+All seven tools are exposed automatically once you connect. **1 credit = 1 successful request.** Failed or rate-limited calls never consume credits.
 
 ### 1. `get_youtube_transcript`
 
@@ -326,6 +353,12 @@ Get every video in a YouTube playlist.
 | `continuation` | string | optional | Opaque token — fetches the next page |
 
 **Cost:** 1 credit/page.
+
+### 7. `get_credits` <sub>· **FREE**</sub>
+
+Check the remaining credit balance for your key/account. No parameters.
+
+**Cost:** Free.
 
 ---
 
@@ -399,17 +432,19 @@ Back off and retry after a short delay — don't hammer it in a tight loop.
 
 ## Verification
 
-This repo ships manifests (`server.json`, `smithery.yaml`, `mcp.json`, etc.) rather than
-server source, because the server itself is a hosted, remote endpoint — the implementation
-lives in the main product's codebase, the same way a REST API's server code doesn't live in
-its OpenAPI-spec repo. To make that verifiable rather than just asserted:
+This repo contains the MIT-licensed source of the local stdio MCP server in [`server/`](./server)
+(tool definitions, input validation, API calls, error mapping), plus the manifests for the
+hosted endpoint. The hosted endpoint and the REST API behind both are run by
+getyoutubetranscript.com and are not open source. To check either one yourself:
 
-- **Run [`verify.js`](./verify.js) yourself** — zero dependencies, zero auth required:
+- **Run the local server's live test** — `GYT_API_KEY=sk_live_... npm test --prefix server`
+  starts `server/index.js` over stdio, lists all 7 tools, and calls the free ones.
+- **Run [`verify.js`](./verify.js) against the hosted endpoint** — zero dependencies, zero auth required:
   ```sh
   node verify.js
   ```
   It performs the real MCP handshake (`initialize` then `tools/list`) against the live
-  endpoint and prints the server's actual response, including all 6 real tool schemas.
+  endpoint and prints the server's actual response, including all 7 real tool schemas.
   Tool *discovery* is public; only tool *calls* require an API key or OAuth token (see
   [Authentication](#authentication)).
 - **Independently verified by four third-party MCP directories**, each of which connected
