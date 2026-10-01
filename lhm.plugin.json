@@ -83,6 +83,15 @@
         },
         "required": []
       }
+    },
+    {
+      "name": "get_credits",
+      "description": "Check the remaining credit balance for the connected key or account. Free - no credits charged.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
     }
   ]
 }

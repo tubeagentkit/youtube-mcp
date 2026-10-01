@@ -1,15 +1,41 @@
-# YouTube MCP Server: Transcripts, Search, Channels & Playlists 🎬
+<p align="center">
+  <a href="https://getyoutubetranscript.com">
+    <img src="public/brand/logo.png" width="140" height="140" alt="GetYouTubeTranscript" />
+  </a>
+</p>
 
-[![License](https://img.shields.io/badge/License-MIT-4CAF50?style=for-the-badge)](./LICENSE)
-[![Website](https://img.shields.io/badge/Website-getyoutubetranscript.com-FF3B00?style=for-the-badge)](https://getyoutubetranscript.com)
+<h1 align="center">YouTube MCP Server: Transcripts, Search, Channels & Playlists</h1>
 
-> A remote MCP server for YouTube — transcripts, video/channel search, channel browsing, in-channel search, and playlist extraction. API-key **or** OAuth 2.1 sign-in. Free tier, no card required.
+<p align="center">
+  A remote MCP server for YouTube: transcripts, video and channel search, channel browsing, in-channel search, and playlist extraction.<br/>
+  API key <b>or</b> OAuth 2.1 sign-in. Free tier, no card required.
+</p>
 
-Seven tools, one hosted endpoint, no local install — for Claude, ChatGPT, Cursor, VS Code, Windsurf, and 15+ other MCP-compatible clients.
+<p align="center">
+  <a href="https://cursor.com/en/install-mcp?name=youtube-transcript&config=eyJ1cmwiOiJodHRwczovL2dldHlvdXR1YmV0cmFuc2NyaXB0LmNvbS9hcGkvbWNwIn0="><img alt="Install in Cursor" src="https://img.shields.io/badge/Cursor-Install_MCP-000000?style=for-the-badge&logo=cursor&logoColor=white"/></a>
+  <a href="https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%7B%22name%22%3A%22youtube-transcript%22%2C%22url%22%3A%22https%3A%2F%2Fgetyoutubetranscript.com%2Fapi%2Fmcp%22%7D"><img alt="Install in VS Code" src="https://img.shields.io/badge/VS_Code-Install_MCP-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white"/></a>
+</p>
+
+<p align="center">
+  <a href="https://getyoutubetranscript.com"><img src="https://img.shields.io/badge/Website-getyoutubetranscript.com-FF3B00?style=for-the-badge" alt="Website"/></a>
+  <a href="https://getyoutubetranscript.com/docs"><img src="https://img.shields.io/badge/Docs-API_Reference-06B6D4?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Docs"/></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-4CAF50?style=for-the-badge" alt="MIT License"/></a>
+</p>
+
+Seven tools, one hosted endpoint, no local install, for Claude, ChatGPT, Cursor, VS Code, Windsurf, and 15+ other MCP-compatible clients.
 
 ```
 https://getyoutubetranscript.com/api/mcp
 ```
+
+**Quick taste:**
+
+```txt
+Search @veritasium for videos about black holes, pull the transcript of the
+two best matches, and tell me where they disagree.
+```
+
+The agent chains `search_channel_videos` and `get_youtube_transcript` on its own. No code on your side.
 
 ---
 
@@ -18,7 +44,7 @@ https://getyoutubetranscript.com/api/mcp
 |  | This MCP | Typical single-purpose YouTube MCP |
 |---|---|---|
 | Hosting | ✅ Remote (no local install, no build step) | ❌ Local stdio process to manage |
-| Tools | ✅ 6 (transcript, search, channel latest/search/videos, playlist) | ❌ Usually 1 (transcript only) |
+| Tools | ✅ 7 (transcript, search, channel latest/search/videos, playlist, credits) | ❌ Usually 1 (transcript only) |
 | YouTube search (video *and* channel) | ✅ Yes | ❌ No |
 | Full channel upload history, paginated | ✅ Yes | ❌ No |
 | In-channel search | ✅ Yes | ❌ No |
@@ -27,9 +53,36 @@ https://getyoutubetranscript.com/api/mcp
 
 ---
 
+## Install as an Agent Plugin
+
+This repo root is also an [Agent Plugins 1.0.0](https://agent-plugins.org/specification) package. It bundles the MCP server with a `youtube` skill that tells the agent which tool to use when, what each one costs, and how to avoid wasting credits.
+
+```text
+plugin.json                # plugin manifest
+mcp.json                   # hosted MCP server (streamable-http, OAuth, no key in the file)
+skills/youtube/SKILL.md    # when and how to use the 7 tools
+```
+
+In VS Code, run **Chat: Install Plugin From Source** and paste `https://github.com/tubeagentkit/youtube-mcp`. Other clients that support Agent Plugins can point at this repo or a local clone. For Cursor there is a separate [plugin repo](https://github.com/tubeagentkit/youtube-transcript-cursor-plugin).
+
+The package holds no credentials. Check the manifests against the published schemas yourself:
+
+```sh
+curl -sO https://agent-plugins.org/schemas/1.0.0/plugin.schema.json
+curl -sO https://agent-plugins.org/schemas/1.0.0/mcp.schema.json
+npx ajv-cli@5 validate --spec=draft2020 -s plugin.schema.json -d plugin.json
+npx ajv-cli@5 validate --spec=draft2020 -s mcp.schema.json -d mcp.json
+```
+
+---
+
 ## Quick Install
 
 > **Requirements:** a free [getyoutubetranscript.com](https://getyoutubetranscript.com) account ([sign up](https://getyoutubetranscript.com) — 100 credits, no card) and an API key from your [dashboard](https://getyoutubetranscript.com/dashboard) — **or** just connect via OAuth and skip the key entirely (see [Authentication](#authentication) below).
+
+> **Tip:** clients that support MCP OAuth can skip the `headers` block in the snippets below and sign in through the browser instead.
+
+> **Tip:** to stop repeating "use the transcript tool", add a standing instruction to your client's rules or custom instructions, for example: *"When I share a YouTube link, fetch its transcript with the youtube-transcript MCP before answering."*
 
 <details>
 <summary><b>Claude Code (CLI)</b></summary>

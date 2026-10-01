@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "youtube-transcript",
   "version": "1.0.0",
-  "description": "YouTube transcripts, video and channel search, channel browsing, and playlist extraction for AI agents, via the hosted getyoutubetranscript.com MCP server. API-key auth, free tier, no card required.",
+  "description": "YouTube transcripts, video and channel search, channel browsing, and playlist extraction for AI agents, via the hosted getyoutubetranscript.com MCP server. API-key or OAuth sign-in, free tier, no card required.",
   "author": {
     "name": "TubeAgentKit",
     "email": "hello@tubeagentkit.dev",
