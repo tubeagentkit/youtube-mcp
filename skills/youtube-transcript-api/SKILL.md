@@ -15,8 +15,26 @@ Use this skill when the user wants **code** that fetches YouTube data. If they j
 
 - Base URL: `https://getyoutubetranscript.com/api/v1`
 - Auth: `Authorization: Bearer <key>` (or `x-api-key: <key>`). Keys start with `sk_live_`.
-- Read the key from an environment variable (use `GYT_API_KEY`). Never hardcode it, print it, or commit it. Add it to `.env.example` as an empty placeholder.
-- The user gets a key from https://getyoutubetranscript.com/dashboard. Inside a terminal agent you can also create one with the self-signup endpoints below, but only with an email the user gives you, and only with the 6-digit code they read from that inbox. Never guess either.
+- Read the key from an environment variable (use `YOUTUBE_TRANSCRIPT_API_KEY`). Never hardcode it, print it, or commit it. Add it to `.env.example` as an empty placeholder.
+- Send a `User-Agent` header naming the app or agent. Requests with a missing or generic library User-Agent can be blocked by Cloudflare (403, error 1010).
+
+## Getting a key without leaving the terminal
+
+If the user has no key, set one up in the conversation instead of sending them to a website:
+
+1. Ask once: "Paste your getyoutubetranscript.com API key if you have one. Otherwise give me your email: I'll create an account (or sign you in), you'll get a 6-digit code by email, and I'll put the key in this project's `.env`." Use only an email given in reply.
+2. Send the code: `curl -s -X POST https://getyoutubetranscript.com/api/v1/signup -H "Content-Type: application/json" -H "User-Agent: <agent>" -d '{"email":"<email>"}'`. Disposable addresses are rejected. Existing accounts work too and get a new key.
+3. When the user sends the code, write the key straight into `.env` without printing it (and make sure `.env` is in `.gitignore`):
+
+   ```sh
+   curl -s -X POST https://getyoutubetranscript.com/api/v1/signup/verify \
+     -H "Content-Type: application/json" -H "User-Agent: <agent>" \
+     -d '{"email":"<email>","otp":"<code>"}' \
+     | sed -n 's/.*"api_key" *: *"\(sk_live_[A-Za-z0-9_-]*\)".*/YOUTUBE_TRANSCRIPT_API_KEY=\1/p' >> .env
+   grep -q '^YOUTUBE_TRANSCRIPT_API_KEY=' .env && echo "key saved to .env" || echo "no key: rerun the verify call without the pipe to see the error"
+   ```
+
+   A wrong or expired code returns `{"success": false, "message": "Invalid OTP"}`: ask for the code again.
 - Full spec: https://getyoutubetranscript.com/openapi.json (use it to generate a typed client if the project already uses codegen).
 
 ## Endpoints (all GET unless noted)
@@ -64,7 +82,7 @@ import time
 import requests
 
 BASE = "https://getyoutubetranscript.com/api/v1"
-HEADERS = {"Authorization": f"Bearer {os.environ['GYT_API_KEY']}"}
+HEADERS = {"Authorization": f"Bearer {os.environ['YOUTUBE_TRANSCRIPT_API_KEY']}"}
 
 def get(path, **params):
     for attempt in range(5):
@@ -102,7 +120,7 @@ export async function getTranscript(video: string, language = "en") {
   const url = new URL(`${BASE}/transcript`);
   url.searchParams.set("v", video);
   url.searchParams.set("language", language);
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${process.env.GYT_API_KEY}` } });
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${process.env.YOUTUBE_TRANSCRIPT_API_KEY}` } });
   const body = await res.json();
   if (!body.success) throw new Error(`${body.code}: ${body.message}`);
   return body.data as { video_id: string; title: string; author_name: string; transcript: string; word_count: number };
@@ -113,7 +131,7 @@ export async function getTranscript(video: string, language = "en") {
 
 ```sh
 curl -s "https://getyoutubetranscript.com/api/v1/transcript?v=dQw4w9WgXcQ" \
-  -H "Authorization: Bearer $GYT_API_KEY"
+  -H "Authorization: Bearer $YOUTUBE_TRANSCRIPT_API_KEY"
 ```
 
 ## Good practice for code you write
