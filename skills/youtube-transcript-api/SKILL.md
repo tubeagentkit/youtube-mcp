@@ -43,6 +43,7 @@ Success: `{"success": true, "data": {...}}`. Failure: `{"success": false, "code"
 | HTTP | Typical `code` | What the code should do |
 |---|---|---|
 | 400 | `BAD_REQUEST`, `INVALID_URL` | Bug in the request. Do not retry. |
+| 400 | `CURSOR_EXPIRED` | The page cursor is older than 24 hours. Restart from the first page. |
 | 401 | `MISSING_API_KEY`, `INVALID_API_KEY` | Missing, wrong, or revoked key. Stop and surface it. |
 | 402 | `PAYMENT_REQUIRED` | The account has no credits left. Stop the batch and tell the user. Do not retry. |
 | 404 | `TRANSCRIPT_NOT_FOUND`, `TRANSCRIPT_DISABLED`, `VIDEO_UNAVAILABLE`, `LANGUAGE_NOT_AVAILABLE` | That video has no usable transcript. Record it and move on to the next video. |
@@ -51,7 +52,7 @@ Success: `{"success": true, "data": {...}}`. Failure: `{"success": false, "code"
 
 ## Pagination
 
-`/playlist`, `/channel/videos`, and `/channel/search` return `continuation_token`. Pass it back as `continuation` (and nothing else) to get the next page, until `has_more` is false. `/search` uses the same token but takes it as `page_token`. Tokens are opaque: never build or edit one.
+`/playlist`, `/channel/videos`, and `/channel/search` return `continuation_token`. Pass it back as `continuation` (and nothing else) to get the next page, until `has_more` is false. `/search` uses the same token but takes it as `page_token`. Tokens are short opaque handles (`c_...`) that expire after 24 hours: never build or edit one, and don't store them for later runs.
 
 If the requested `language` has no captions, `/transcript` may fall back to another available language. Check `language_code` in the response before assuming you got the one you asked for.
 
