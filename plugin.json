@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "youtube-transcript",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "YouTube transcripts, video and channel search, channel browsing, and playlist extraction for AI agents and chat assistants, via the hosted getyoutubetranscript.com MCP server. Sign in with OAuth or use an API key.",
   "author": {
     "name": "TubeAgentKit",
@@ -18,14 +18,17 @@
     "video-search",
     "channel-search",
     "playlists",
-    "mcp"
+    "mcp",
+    "youtube-transcript-api",
+    "transcript-api",
+    "rest-api"
   ],
   "extensions": {
     "com.openai": {
       "interface": {
         "displayName": "GetYouTubeTranscript",
         "shortDescription": "Chat with any YouTube video",
-        "longDescription": "Turn any YouTube video, channel, or playlist into text you can work with inside ChatGPT. Paste a link and ask for a summary, study notes, key quotes, a translation, or answers to your questions, all grounded in what the video actually says.\n\nWhat you can do:\n- Chat with a YouTube video: ask questions and get answers based on its real transcript.\n- Students: turn lectures, tutorials, and courses into study notes, summaries, and flashcards.\n- Researchers and journalists: pull exact quotes, compare what different speakers said, and research a topic across many videos.\n- Creators and marketers: see what a channel posted recently, find videos on a topic, and review a creator's whole catalogue.\n- Work through a playlist or course video by video.\n- AI agents and Codex: search YouTube and process channels and playlists in bulk.\n\nWorks with regular videos, Shorts, and live stream links, in any caption language the video offers.\n\nLimitations: it reads a video's captions, so videos without captions cannot be transcribed, and transcripts come as one block of text without per-line timestamps. It does not download video or audio, post comments, or change anything on YouTube. Requires a getyoutubetranscript.com account.",
+        "longDescription": "Turn any YouTube video, channel, or playlist into text you can work with inside ChatGPT. Paste a link and ask for a summary, study notes, key quotes, a translation, or answers to your questions, all grounded in what the video actually says.\n\nWhat you can do:\n- Chat with a YouTube video: ask questions and get answers based on its real transcript.\n- Students: turn lectures, tutorials, and courses into study notes, summaries, and flashcards.\n- Researchers and journalists: pull exact quotes, compare what different speakers said, and research a topic across many videos.\n- Creators and marketers: see what a channel posted recently, find videos on a topic, and review a creator's whole catalogue.\n- Work through a playlist or course video by video.\n- AI agents and Codex: search YouTube and process channels and playlists in bulk.\n- Developers: ask Codex to add YouTube transcripts to your app, script, or data pipeline. The bundled YouTube Transcript API skill writes working Python, JavaScript, or curl code against the getyoutubetranscript.com REST API, with pagination, retries, and error handling.\n\nWorks with regular videos, Shorts, and live stream links, in any caption language the video offers.\n\nLimitations: it reads a video's captions, so videos without captions cannot be transcribed, and transcripts come as one block of text without per-line timestamps. It does not download video or audio, post comments, or change anything on YouTube. Requires a getyoutubetranscript.com account.",
         "developerName": "GetYouTubeTranscript",
         "category": "Education and Research",
         "capabilities": [
@@ -35,7 +38,8 @@
           "Search inside one channel's videos",
           "List every video on a channel",
           "List every video in a playlist",
-          "Check remaining account credits"
+          "Check remaining account credits",
+          "Write code that calls the YouTube Transcript API"
         ],
         "websiteURL": "https://getyoutubetranscript.com",
         "supportURL": "https://getyoutubetranscript.com/contact",
@@ -104,7 +108,7 @@
         "commerce_description": "This plugin does not sell products or process payments. It reads public YouTube captions for the user's connected getyoutubetranscript.com account."
       },
       "publication": {
-        "release_notes": "Initial release: YouTube transcripts, YouTube search, channel and playlist browsing, and a credit balance check.",
+        "release_notes": "Initial release: YouTube transcripts, YouTube search, channel and playlist browsing, a credit balance check, and a YouTube Transcript API skill for writing integration code.",
         "translations": {
           "de-DE": {
             "subtitle": "Chatte mit jedem YouTube-Video",

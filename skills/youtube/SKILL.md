@@ -9,7 +9,7 @@ metadata:
 
 # YouTube (getyoutubetranscript.com)
 
-This plugin bundles the hosted `youtube-transcript` MCP server (`https://getyoutubetranscript.com/api/mcp`). Its 7 tools are the only data path: do not scrape youtube.com and do not call the REST API directly from this skill.
+This plugin bundles the hosted `youtube-transcript` MCP server (`https://getyoutubetranscript.com/api/mcp`). Its 7 tools are the only data path for answering the user: do not scrape youtube.com and do not call the REST API directly from this skill. If the user wants code (an app, script, or pipeline that fetches YouTube data), use the `youtube-transcript-api` skill instead.
 
 **Authentication.** Connect with OAuth (the client prompts the user to sign in on first use) or send an API key as a Bearer token. If a tool call fails with an auth error, ask the user to finish the sign-in prompt or check their key in the [dashboard](https://getyoutubetranscript.com/dashboard).
 
