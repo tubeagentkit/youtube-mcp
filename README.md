@@ -74,6 +74,10 @@ npx ajv-cli@5 validate --spec=draft2020 -s plugin.schema.json -d plugin.json
 npx ajv-cli@5 validate --spec=draft2020 -s mcp.schema.json -d mcp.json
 ```
 
+### ChatGPT and Codex
+
+The same `plugin.json` carries the ChatGPT/Codex plugin directory listing under `extensions.com.openai` (other clients ignore it). `scripts/build-openai-zip.sh` checks it against OpenAI's field limits and builds the upload ZIP in `dist/`, with only `plugin.json`, `mcp.json`, `skills/` and `assets/`.
+
 ---
 
 ## Quick Install

@@ -90,7 +90,7 @@ server.registerTool(
   {
     title: "Get YouTube Transcript",
     description:
-      "Fetch the full transcript for a YouTube video, plus its title/author metadata. Returns the complete spoken text as one block (no per-segment timestamps).",
+      "Use this when the user shares a YouTube video link or ID, or asks to summarize, explain, quote, translate, take notes on, or chat about a specific YouTube video, lecture, podcast, or talk. Returns the full spoken text (captions) as one block, plus the title and channel. Accepts watch, youtu.be, Shorts, and live URLs. No per-line timestamps, so do not promise a timestamped breakdown. Do not use for non-YouTube videos or for files the user uploads. If a video has no captions, this returns an error: tell the user instead of guessing what the video says.",
     inputSchema: {
       video_url: z.string().describe("YouTube URL (full or short) or an 11-character video ID"),
       language: z.string().optional().describe("Language code, e.g. 'en', 'es'. Defaults to 'en'."),
@@ -109,7 +109,7 @@ server.registerTool(
   "search_youtube",
   {
     title: "Search YouTube",
-    description: "Search YouTube for videos or channels. Paginate with `continuation` from a previous response.",
+    description: "Use this when the user wants to find YouTube videos or channels on a topic, for example 'find lectures on linear algebra' or 'popular videos about the Apollo missions', before reading or comparing them. Returns each result's title, video ID, link, channel, views, length, and upload date. Pass `continuation` from a previous response for the next page. Does not return what a video says: call get_youtube_transcript with a result's video ID for that.",
     inputSchema: {
       query: z.string().optional().describe("Search query. Required unless `continuation` is set."),
       search_type: z.enum(["video", "channel"]).optional().describe("'video' (default) or 'channel'."),
@@ -127,7 +127,7 @@ server.registerTool(
   "get_channel_latest_videos",
   {
     title: "Get Channel Latest Videos",
-    description: "Get a channel's metadata plus its most recent uploads. Free - no credits charged.",
+    description: "Use this when the user asks what a YouTube channel has posted recently, or wants a channel's details (name, description, links) with its newest uploads. Accepts an @handle, channel URL, or UC... ID. For a channel's full upload history use list_channel_videos; to find a topic inside one channel use search_channel_videos.",
     inputSchema: { channel: z.string().describe("Channel @handle, URL, or UC... id") },
     annotations: readOnly,
   },
@@ -138,7 +138,7 @@ server.registerTool(
   "search_channel_videos",
   {
     title: "Search Channel Videos",
-    description: "Search within one channel's videos for a query. Paginate with `continuation` from a previous response.",
+    description: "Use this when the user wants videos from one specific YouTube channel about a topic, for example 'what has @hubermanlab said about sleep' or 'find the MIT OpenCourseWare videos on recursion'. Searches only inside that channel. Pass `continuation` from a previous response for the next page.",
     inputSchema: {
       channel: z.string().optional().describe("Channel @handle, URL, or UC... id. Required unless `continuation` is set."),
       query: z.string().optional().describe("Query to search within the channel. Required unless `continuation` is set."),
@@ -158,7 +158,7 @@ server.registerTool(
   "list_channel_videos",
   {
     title: "List Channel Videos",
-    description: "List every video a channel has uploaded (the /videos tab), paginated with `continuation`.",
+    description: "Use this when the user wants every video a YouTube channel has uploaded, for example to review a creator's whole catalogue or to work through many videos in bulk. Returns the channel's uploads (its Videos tab) one page at a time. Pass `continuation` from a previous response for the next page.",
     inputSchema: {
       channel: z.string().optional().describe("Channel @handle, URL, or UC... id. Required unless `continuation` is set."),
       continuation: continuationField,
@@ -175,7 +175,7 @@ server.registerTool(
   "list_playlist_videos",
   {
     title: "List Playlist Videos",
-    description: "Get every video in a YouTube playlist, paginated with `continuation`.",
+    description: "Use this when the user shares a YouTube playlist, or wants to work through a course, lecture series, or podcast playlist video by video (for example to build study notes for each lecture). Returns the videos in playlist order, one page at a time. Pass `continuation` from a previous response for the next page.",
     inputSchema: {
       playlist: z.string().optional().describe("Playlist URL or id. Required unless `continuation` is set."),
       continuation: continuationField,
@@ -192,7 +192,7 @@ server.registerTool(
   "get_credits",
   {
     title: "Get Credits",
-    description: "Check the remaining credit balance for this API key. Free - never charged.",
+    description: "Use this when the user asks how many credits their getyoutubetranscript.com API key has left, or after another tool reports the account has no credits remaining. Returns plan and top-up credit balances. Calling it does not use credits.",
     inputSchema: {},
     annotations: { ...readOnly, openWorldHint: false },
   },
