@@ -60,33 +60,33 @@
           "positive": [
             {
               "description": "Summarize a lecture video",
-              "prompt": "Summarize this video and give me the 5 key points: https://www.youtube.com/watch?v=J7DzL2_Na80",
+              "prompt": "Using GetYouTubeTranscript, summarize this video and give me the 5 key points: https://www.youtube.com/watch?v=J7DzL2_Na80",
               "tools_triggered": "get_youtube_transcript",
               "expected_behavior": "Fetches the transcript of MIT 18.06 Lecture 1 (The Geometry of Linear Equations) and returns a summary with 5 key points drawn from it."
             },
             {
               "description": "Answer a question about a video",
-              "prompt": "In this lecture, which textbook does Gilbert Strang say the course uses? https://www.youtube.com/watch?v=J7DzL2_Na80",
+              "prompt": "Using GetYouTubeTranscript, which textbook does Gilbert Strang say this course uses? https://www.youtube.com/watch?v=J7DzL2_Na80",
               "tools_triggered": "get_youtube_transcript",
               "expected_behavior": "Fetches the transcript and answers that the course text is his book Introduction to Linear Algebra, based on what he says in the video."
             },
             {
               "description": "Find a video and summarize it",
-              "prompt": "Find a popular lecture on linear algebra on YouTube and summarize the top result.",
+              "prompt": "Using GetYouTubeTranscript, find a popular lecture on linear algebra on YouTube and summarize the top result.",
               "tools_triggered": "search_youtube, get_youtube_transcript",
               "expected_behavior": "Searches YouTube, picks a top lecture result, fetches its transcript, and summarizes it, naming the video and channel."
             },
             {
               "description": "Recent uploads from a channel",
-              "prompt": "What has the MIT OpenCourseWare YouTube channel (@mitocw) posted recently?",
+              "prompt": "Using GetYouTubeTranscript, what has the MIT OpenCourseWare YouTube channel (@mitocw) posted recently?",
               "tools_triggered": "get_channel_latest_videos",
               "expected_behavior": "Returns the channel's details and a list of its most recent uploads with titles and links."
             },
             {
               "description": "Study notes from a playlist",
-              "prompt": "List the videos in this playlist, then write study notes for the first lecture: https://www.youtube.com/playlist?list=PLE7DDD91010BC51F8",
+              "prompt": "Using GetYouTubeTranscript, list the videos in this playlist, then write study notes for lecture 1: https://www.youtube.com/playlist?list=PLE7DDD91010BC51F8",
               "tools_triggered": "list_playlist_videos, get_youtube_transcript",
-              "expected_behavior": "Lists the MIT 18.06 Linear Algebra playlist in order, then fetches the first lecture's transcript and writes study notes from it."
+              "expected_behavior": "Lists the MIT 18.06 Linear Algebra playlist in order, then fetches the transcript of lecture 1 (The Geometry of Linear Equations) and writes study notes from it."
             }
           ],
           "negative": [
@@ -105,7 +105,8 @@
           ]
         },
         "commerce": false,
-        "commerce_description": "This plugin does not sell products or process payments. It reads public YouTube captions for the user's connected getyoutubetranscript.com account."
+        "commerce_description": "This plugin does not sell products or process payments. It reads public YouTube captions for the user's connected getyoutubetranscript.com account.",
+        "demo_recording_url": "https://getyoutubetranscript.com/review/openai-plugin-demo-v1.mp4"
       },
       "publication": {
         "release_notes": "Initial release: YouTube transcripts, YouTube search, channel and playlist browsing, a credit balance check, and a YouTube Transcript API skill for writing integration code.",
