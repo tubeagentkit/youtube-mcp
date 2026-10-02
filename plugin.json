@@ -106,7 +106,7 @@
         },
         "commerce": false,
         "commerce_description": "This plugin does not sell products or process payments. It reads public YouTube captions for the user's connected getyoutubetranscript.com account.",
-        "demo_recording_url": "https://getyoutubetranscript.com/review/openai-plugin-demo-v1.mp4"
+        "demo_recording_url": "https://getyoutubetranscript.com/review/openai-plugin-demo-v2.mp4"
       },
       "publication": {
         "release_notes": "Initial release: YouTube transcripts, YouTube search, channel and playlist browsing, a credit balance check, and a YouTube Transcript API skill for writing integration code.",
