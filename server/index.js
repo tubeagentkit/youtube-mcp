@@ -158,7 +158,7 @@ server.registerTool(
   "list_channel_videos",
   {
     title: "List Channel Videos",
-    description: "Use this when the user wants every video a YouTube channel has uploaded, for example to review a creator's whole catalogue or to work through many videos in bulk. Returns the channel's uploads (its Videos tab) one page at a time. Pass `continuation` from a previous response for the next page.",
+    description: "Use this when the user wants to browse a YouTube channel's uploads beyond its latest videos, for example to see a creator's older episodes or find a video they remember from that channel. Returns the channel's uploads (its Videos tab) one page at a time. Pass `continuation` from a previous response for the next page.",
     inputSchema: {
       channel: z.string().optional().describe("Channel @handle, URL, or UC... id. Required unless `continuation` is set."),
       continuation: continuationField,
