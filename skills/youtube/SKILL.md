@@ -37,7 +37,7 @@ This plugin bundles the hosted `youtube-transcript` MCP server (`https://getyout
 
 | Tool | Cost | Key parameters |
 |---|---|---|
-| `get_youtube_transcript` | 1 credit | `video_url` (required), `language` (default `en`), `send_metadata` (default `true`) |
+| `get_youtube_transcript` | 1 credit | `video_url` (required), `language` (default `en`), `send_metadata` (default `true`), `timestamps` (default `false`) |
 | `search_youtube` | 1 credit per page | `query`, `search_type` (`video` or `channel`), `continuation` |
 | `get_channel_latest_videos` | Free | `channel` (required): `@handle`, URL or `UC...` ID |
 | `search_channel_videos` | 1 credit per page | `channel`, `query`, `continuation` |
@@ -49,7 +49,7 @@ This plugin bundles the hosted `youtube-transcript` MCP server (`https://getyout
 
 ## Rules that save credits and avoid wrong answers
 
-- **No timestamps.** `get_youtube_transcript` returns the full spoken text as one block. Do not promise timestamps, chapter times or a segment breakdown.
+- **Timestamps are opt-in.** By default `get_youtube_transcript` returns the full spoken text as one block. Set `timestamps` to `true` when the user wants timestamps, wants to find or quote where something is said, or wants a timeline or chapter breakdown: each caption line then starts with its `[m:ss]` time. Same credit cost.
 - **Search returns metadata only.** Pick the few best results, then fetch transcripts for those. Do not transcribe every result.
 - **Paginate with `continuation`.** Pass the opaque token from the previous response to get the next page. Never build one yourself, and stop paging once you have enough.
 - **Prefer the free tool for recent uploads.** Use `get_channel_latest_videos` before `list_channel_videos` when recent videos are enough. No need to resolve an `@handle` first.

@@ -41,7 +41,7 @@ If the user has no key, set one up in the conversation instead of sending them t
 
 | Endpoint | Query params | Returns |
 |---|---|---|
-| `/transcript` | `v` (video URL or 11-char ID, required), `language` (e.g. `en`) | `video_id`, `title`, `author_name`, `transcript` (one text block), `word_count` |
+| `/transcript` | `v` (video URL or 11-char ID, required), `language` (e.g. `en`), `timestamps` (`true` to add `segments`) | `video_id`, `title`, `author_name`, `transcript` (one text block), `word_count`, plus `segments` when `timestamps=true` |
 | `/search` | `q`, `type` (`video` or `channel`), `limit`, `country`, `language`; or `page_token` alone for the next page | `video_results` plus `continuation_token` (send it back as `page_token`) |
 | `/channel/latest` | `channel` (@handle, URL, or `UC...` ID) | channel metadata and its newest uploads |
 | `/channel/videos` | `channel` or `continuation` | every upload, paginated |
@@ -52,7 +52,7 @@ If the user has no key, set one up in the conversation instead of sending them t
 | `POST /signup` | body `{"email"}` | emails a 6-digit code (no key needed) |
 | `POST /signup/verify` | body `{"email","otp"}` | returns a new API key |
 
-Transcripts are plain text without per-line timestamps. Do not build features that need timestamps on top of this API.
+By default the transcript is one block of plain text. Add `timestamps=true` to also get `data.segments`, an array of `{start, duration, text}` with `start` and `duration` in seconds. Same credit cost.
 
 ## Responses and errors
 

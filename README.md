@@ -294,6 +294,8 @@ The agent calls `get_youtube_transcript` and summarizes the result. If you conne
 
 Prefer a local process? [`server/`](./server) is an open-source stdio MCP server with the same 7 tools, built on the official MCP TypeScript SDK. It calls the public [REST API](https://getyoutubetranscript.com/docs) with your API key.
 
+The local server does not have the `timestamps` option yet. Use the hosted endpoint for timestamped transcripts.
+
 ```sh
 git clone https://github.com/tubeagentkit/youtube-mcp
 npm install --prefix youtube-mcp/server
@@ -352,8 +354,9 @@ Fetch the full transcript for a YouTube video, plus its title/author/thumbnail m
 | `video_url` | string | **required** | YouTube URL (full or short) or an 11-character video ID |
 | `language` | string | optional | Language code, e.g. `en`, `es`. Defaults to `en` |
 | `send_metadata` | boolean | optional | Include title/author/thumbnail. Defaults to `true` |
+| `timestamps` | boolean | optional | One line per caption, each starting with its `[m:ss]` start time (`[h:mm:ss]` past an hour). Defaults to `false` (one block of text) |
 
-**Cost:** 1 credit. Note: this returns the full transcript as one text block — there's no per-segment timestamp breakdown.
+**Cost:** 1 credit, with or without `timestamps`.
 
 ### 2. `search_youtube`
 

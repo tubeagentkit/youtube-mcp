@@ -20,7 +20,7 @@
   "tools": [
     {
       "name": "get_youtube_transcript",
-      "description": "Use this when the user shares a YouTube video link or ID, or asks to summarize, explain, quote, translate, take notes on, or chat about a specific YouTube video, lecture, podcast, or talk. Returns the full spoken text (captions) as one block, plus the title and channel. Accepts watch, youtu.be, Shorts, and live URLs. No per-line timestamps, so do not promise a timestamped breakdown. Do not use for non-YouTube videos or for files the user uploads. If a video has no captions, this returns an error: tell the user instead of guessing what the video says.",
+      "description": "Use this when the user shares a YouTube video link or ID, or asks to summarize, explain, quote, translate, take notes on, or chat about a specific YouTube video, lecture, podcast, or talk. Returns the full spoken text (captions) as one block, plus the title and channel. Set timestamps to true when the user wants timestamps, wants to find or quote where something is said, or wants a timeline or chapter breakdown: each caption line then starts with its [m:ss] time. Accepts watch, youtu.be, Shorts, and live URLs. Do not use for non-YouTube videos or for files the user uploads. If a video has no captions, this returns an error: tell the user instead of guessing what the video says.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -35,6 +35,10 @@
           "send_metadata": {
             "type": "boolean",
             "description": "Include title/author/thumbnail metadata. Defaults to true."
+          },
+          "timestamps": {
+            "type": "boolean",
+            "description": "One line per caption, each starting with its [m:ss] start time. Defaults to false (one block of text)."
           }
         },
         "required": [
