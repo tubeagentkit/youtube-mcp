@@ -294,8 +294,6 @@ The agent calls `get_youtube_transcript` and summarizes the result. If you conne
 
 Prefer a local process? [`server/`](./server) is an open-source stdio MCP server with the same 7 tools, built on the official MCP TypeScript SDK. It calls the public [REST API](https://getyoutubetranscript.com/docs) with your API key.
 
-The local server does not have the `timestamps` option yet. Use the hosted endpoint for timestamped transcripts.
-
 ```sh
 git clone https://github.com/tubeagentkit/youtube-mcp
 npm install --prefix youtube-mcp/server

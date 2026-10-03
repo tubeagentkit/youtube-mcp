@@ -27,6 +27,10 @@ assert.deepEqual(names, [
   "search_youtube",
 ]);
 
+const transcriptTool = tools.find((t) => t.name === "get_youtube_transcript");
+assert.ok(transcriptTool.inputSchema.properties.timestamps, "get_youtube_transcript should accept timestamps");
+console.log("timestamps input ok");
+
 const credits = await client.callTool({ name: "get_credits", arguments: {} });
 assert.equal(credits.isError, undefined, credits.content[0].text);
 console.log("get_credits ok");

@@ -55,6 +55,20 @@ async function apiGet(path, params) {
   return body.data;
 }
 
+/** "1:05", or "1:02:05" past an hour: the same clock YouTube shows, and the same format as the hosted server. */
+function formatPlayerTime(totalSeconds) {
+  const s = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(s / 3600);
+  const minutes = Math.floor((s % 3600) / 60);
+  const seconds = s % 60;
+  const pad = (n) => String(n).padStart(2, "0");
+  return hours > 0 ? `${hours}:${pad(minutes)}:${pad(seconds)}` : `${minutes}:${pad(seconds)}`;
+}
+
+function toTimestampedText(segments) {
+  return segments.map((segment) => `[${formatPlayerTime(segment.start)}] ${segment.text}`).join("\n");
+}
+
 function textResult(text) {
   return { content: [{ type: "text", text }] };
 }
@@ -83,25 +97,28 @@ const continuationField = z
   .optional()
   .describe("Opaque token from a previous response - fetches the next page. Do not construct this yourself.");
 
-const server = new McpServer({ name: "youtube-mcp", version: "1.1.0" });
+const server = new McpServer({ name: "youtube-mcp", version: "1.2.0" });
 
 server.registerTool(
   "get_youtube_transcript",
   {
     title: "Get YouTube Transcript",
     description:
-      "Use this when the user shares a YouTube video link or ID, or asks to summarize, explain, quote, translate, take notes on, or chat about a specific YouTube video, lecture, podcast, or talk. Returns the full spoken text (captions) as one block, plus the title and channel. Accepts watch, youtu.be, Shorts, and live URLs. No per-line timestamps, so do not promise a timestamped breakdown. Do not use for non-YouTube videos or for files the user uploads. If a video has no captions, this returns an error: tell the user instead of guessing what the video says.",
+      "Use this when the user shares a YouTube video link or ID, or asks to summarize, explain, quote, translate, take notes on, or chat about a specific YouTube video, lecture, podcast, or talk. Returns the full spoken text (captions) as one block, plus the title and channel. Set timestamps to true when the user wants timestamps, wants to find or quote where something is said, or wants a timeline or chapter breakdown: each caption line then starts with its [m:ss] time. Accepts watch, youtu.be, Shorts, and live URLs. Do not use for non-YouTube videos or for files the user uploads. If a video has no captions, this returns an error: tell the user instead of guessing what the video says.",
     inputSchema: {
       video_url: z.string().describe("YouTube URL (full or short) or an 11-character video ID"),
       language: z.string().optional().describe("Language code, e.g. 'en', 'es'. Defaults to 'en'."),
       send_metadata: z.boolean().optional().describe("Include title/author metadata. Defaults to true."),
+      timestamps: z.boolean().optional().describe("One line per caption, each starting with its [m:ss] start time. Defaults to false (one block of text)."),
     },
     annotations: readOnly,
   },
-  tool(async ({ video_url, language, send_metadata }) => {
-    const data = await apiGet("/transcript", { v: video_url, language });
-    if (send_metadata === false) return textResult(data.transcript);
-    return textResult(`# Metadata\n\n## Title: ${data.title}\n## Author: ${data.author_name}\n\n# Transcript\n\n${data.transcript}`);
+  tool(async ({ video_url, language, send_metadata, timestamps }) => {
+    // The API only adds segments when asked, so default requests are unchanged.
+    const data = await apiGet("/transcript", { v: video_url, language, timestamps: timestamps ? "true" : undefined });
+    const body = timestamps && data.segments?.length ? toTimestampedText(data.segments) : data.transcript;
+    if (send_metadata === false) return textResult(body);
+    return textResult(`# Metadata\n\n## Title: ${data.title}\n## Author: ${data.author_name}\n\n# Transcript\n\n${body}`);
   })
 );
 
