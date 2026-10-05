@@ -42,6 +42,7 @@ If the user has no key, set one up in the conversation instead of sending them t
 | Endpoint | Query params | Returns |
 |---|---|---|
 | `/transcript` | `v` (video URL or 11-char ID, required), `language` (e.g. `en`), `timestamps` (`true` to add `segments`) | `video_id`, `title`, `author_name`, `transcript` (one text block), `word_count`, `language_code` + `requested_language`, `caption_type` (`manual`/`auto`/`null`), `cached`, `fetched_at`, plus `segments` when `timestamps=true` |
+| `/transcript/languages` | `v` | `default_language_code` + `languages` (`language_code`, `name`, `caption_type`); free; empty list when captions are off |
 | `POST /batch` | body `{"videos": [up to 100], "language", "timestamps", "webhook_url"}`, optional `Idempotency-Key` header | `batch_id` right away (202); 1 credit per video that returns a transcript, failures free |
 | `/batch` | `id`, `offset`, `limit` (max 50) | `status` (`queued`/`processing`/`completed`), counts, `credits_charged`, `items` (transcript fields or `error_code`), `next_offset` |
 | `/search` | `q`, `type` (`video` or `channel`), `limit`, `country`, `language`; or `page_token` alone for the next page | `video_results` plus `continuation_token` (send it back as `page_token`) |
