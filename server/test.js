@@ -39,6 +39,14 @@ const latest = await client.callTool({ name: "get_channel_latest_videos", argume
 assert.equal(latest.isError, undefined, latest.content[0].text);
 console.log("get_channel_latest_videos ok");
 
+if (process.env.GYT_RUN_PAID_TESTS === "1") {
+  // 1 credit. A video with only auto-generated captions, to check the provenance header.
+  const transcript = await client.callTool({ name: "get_youtube_transcript", arguments: { video_url: "ZXsQAXx_ao0" } });
+  assert.equal(transcript.isError, undefined, transcript.content[0].text);
+  assert.match(transcript.content[0].text, /## Language: en\n## Captions: auto-generated/);
+  console.log("get_youtube_transcript metadata ok");
+}
+
 const bad = await client.callTool({ name: "search_youtube", arguments: {} });
 assert.equal(bad.isError, true);
 console.log("input validation ok");

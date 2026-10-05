@@ -41,7 +41,9 @@ If the user has no key, set one up in the conversation instead of sending them t
 
 | Endpoint | Query params | Returns |
 |---|---|---|
-| `/transcript` | `v` (video URL or 11-char ID, required), `language` (e.g. `en`), `timestamps` (`true` to add `segments`) | `video_id`, `title`, `author_name`, `transcript` (one text block), `word_count`, plus `segments` when `timestamps=true` |
+| `/transcript` | `v` (video URL or 11-char ID, required), `language` (e.g. `en`), `timestamps` (`true` to add `segments`) | `video_id`, `title`, `author_name`, `transcript` (one text block), `word_count`, `language_code` + `requested_language`, `caption_type` (`manual`/`auto`/`null`), `cached`, `fetched_at`, plus `segments` when `timestamps=true` |
+| `POST /batch` | body `{"videos": [up to 100], "language", "timestamps", "webhook_url"}`, optional `Idempotency-Key` header | `batch_id` right away (202); 1 credit per video that returns a transcript, failures free |
+| `/batch` | `id`, `offset`, `limit` (max 50) | `status` (`queued`/`processing`/`completed`), counts, `credits_charged`, `items` (transcript fields or `error_code`), `next_offset` |
 | `/search` | `q`, `type` (`video` or `channel`), `limit`, `country`, `language`; or `page_token` alone for the next page | `video_results` plus `continuation_token` (send it back as `page_token`) |
 | `/channel/latest` | `channel` (@handle, URL, or `UC...` ID) | channel metadata and its newest uploads |
 | `/channel/videos` | `channel` or `continuation` | every upload, paginated |
@@ -66,13 +68,18 @@ Success: `{"success": true, "data": {...}}`. Failure: `{"success": false, "code"
 | 402 | `PAYMENT_REQUIRED` | The account has no credits left. Stop the batch and tell the user. Do not retry. |
 | 404 | `TRANSCRIPT_NOT_FOUND`, `TRANSCRIPT_DISABLED`, `VIDEO_UNAVAILABLE`, `LANGUAGE_NOT_AVAILABLE` | That video has no usable transcript. Record it and move on to the next video. |
 | 429 | `RATE_LIMITED` | Too many requests this minute. Back off (wait, then retry with exponential delay). |
+| 429 | `TOO_MANY_BATCHES` | 5 batches still running. Wait for one to complete before submitting another. |
 | 5xx | `UPSTREAM_*` | Temporary. Retry a few times with backoff. |
 
 ## Pagination
 
 `/playlist`, `/channel/videos`, and `/channel/search` return `continuation_token`. Pass it back as `continuation` (and nothing else) to get the next page, until `has_more` is false. `/search` uses the same token but takes it as `page_token`. Tokens are short opaque handles (`c_...`) that expire after 24 hours: never build or edit one, and don't store them for later runs.
 
-If the requested `language` has no captions, `/transcript` may fall back to another available language. Check `language_code` in the response before assuming you got the one you asked for.
+If the requested `language` has no captions, `/transcript` may fall back to another available language: `language_code` then differs from `requested_language`, so check it before assuming you got the one you asked for. `caption_type: "auto"` means YouTube speech recognition (names and terms can be misheard).
+
+## Many videos: use `/batch`
+
+For a playlist, channel or list of more than a handful of videos, list the IDs first, then `POST /batch` in chunks of 100 instead of looping `/transcript`. Poll `GET /batch?id=` every few seconds until `status` is `completed`, then page through `items` with `next_offset`. At most 5 unfinished batches per account (429 `TOO_MANY_BATCHES`). For a webhook instead of polling, pass `webhook_url` (public https) and verify the `X-GYT-Signature` header (`t=<unix>,v1=<hex HMAC-SHA256 of "<t>.<raw body>" with webhook_secret>`). The official SDKs wrap all of this: Python `create_batch` / `wait_for_batch` / `verify_webhook_signature` (`pip install getyoutubetranscript`), Node `createBatch` / `waitForBatch` / `verifyWebhookSignature` (`npm i @tubeagentkit/getyoutubetranscript`).
 
 ## Python
 

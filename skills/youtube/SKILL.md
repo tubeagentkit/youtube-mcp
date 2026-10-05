@@ -53,6 +53,7 @@ This plugin bundles the hosted `youtube-transcript` MCP server (`https://getyout
 - **Search returns metadata only.** Pick the few best results, then fetch transcripts for those. Do not transcribe every result.
 - **Paginate with `continuation`.** Pass the opaque token from the previous response to get the next page. Never build one yourself, and stop paging once you have enough.
 - **Prefer the free tool for recent uploads.** Use `get_channel_latest_videos` before `list_channel_videos` when recent videos are enough. No need to resolve an `@handle` first.
+- **Read the metadata header.** `## Language` shows the caption language actually returned, with `(requested xx)` when YouTube didn't have the one asked for: say so instead of presenting it as a translation. `## Captions: auto-generated` means speech recognition, so names and technical terms may be misheard; flag that before quoting them.
 - **Missing transcripts.** A 404 usually means the video has no captions, or is private, age-restricted or region-locked. Tell the user and do not retry in a loop.
 - **Long videos.** For a multi-hour video, summarize in sections rather than loading the whole transcript into one answer.
 - **Rate limits.** On a 429, wait a moment and retry once. Do not hammer the endpoint.
