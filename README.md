@@ -82,7 +82,7 @@ The same `plugin.json` carries the ChatGPT/Codex plugin directory listing under 
 
 ## Quick Install
 
-> **Requirements:** a free [getyoutubetranscript.com](https://getyoutubetranscript.com) account ([sign up](https://getyoutubetranscript.com) — 100 credits, no card) and an API key from your [dashboard](https://getyoutubetranscript.com/dashboard) — **or** just connect via OAuth and skip the key entirely (see [Authentication](#authentication) below).
+> **Requirements:** a free [getyoutubetranscript.com](https://getyoutubetranscript.com/?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp) account ([sign up](https://getyoutubetranscript.com/?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp) — 100 credits, no card) and an API key from your [dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp) — **or** just connect via OAuth and skip the key entirely (see [Authentication](#authentication) below).
 
 > **Tip:** clients that support MCP OAuth can skip the `headers` block in the snippets below and sign in through the browser instead.
 
@@ -292,7 +292,7 @@ The agent calls `get_youtube_transcript` and summarizes the result. If you conne
 
 ## Run locally (stdio)
 
-Prefer a local process? [`server/`](./server) is an open-source stdio MCP server with the same 13 tools, built on the official MCP TypeScript SDK. It calls the public [REST API](https://getyoutubetranscript.com/docs) with your API key.
+Prefer a local process? [`server/`](./server) is an open-source stdio MCP server with the same 13 tools, built on the official MCP TypeScript SDK. It calls the public [REST API](https://getyoutubetranscript.com/docs?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp) with your API key.
 
 ```sh
 git clone https://github.com/tubeagentkit/youtube-mcp
@@ -321,7 +321,7 @@ Live integration test (uses only free tools): `GYT_API_KEY=sk_live_... npm test 
 
 ### API Key
 
-Universal, works with every MCP client. Get one free (100 credits, no card) at the [dashboard](https://getyoutubetranscript.com/dashboard), then send it as a Bearer token:
+Universal, works with every MCP client. Get one free (100 credits, no card) at the [dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp), then send it as a Bearer token:
 
 ```json
 "headers": { "Authorization": "Bearer sk_live_your_key_here" }
@@ -510,7 +510,7 @@ Check the remaining credit balance for your key/account. No parameters.
 
 - **1 credit** = 1 successful request. Failed/rate-limited requests don't consume credits.
 - `get_credits` is the only free tool.
-- [Manage billing →](https://getyoutubetranscript.com/dashboard)
+- [Manage billing →](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp)
 
 ---
 
@@ -521,13 +521,13 @@ Check the remaining credit balance for your key/account. No parameters.
 
 - If using an API key: confirm it starts with `sk_live_` and has no extra whitespace
 - If using OAuth: try disconnecting and reconnecting the connector
-- Confirm the key/connection is still active in your [dashboard](https://getyoutubetranscript.com/dashboard)
+- Confirm the key/connection is still active in your [dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp)
 </details>
 
 <details>
 <summary><b>No credits (402)</b></summary>
 
-Check your balance and top up or upgrade at the [dashboard](https://getyoutubetranscript.com/dashboard).
+Check your balance and top up or upgrade at the [dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp).
 </details>
 
 <details>
@@ -585,7 +585,7 @@ getyoutubetranscript.com and are not open source. To check either one yourself:
 
 ## Also available as a REST API
 
-Building an app instead of an agent? The same backend is a plain JSON REST API — see the [Agent Skill repo](https://github.com/tubeagentkit/youtube-transcript-skills) for the full endpoint reference, or the [dashboard](https://getyoutubetranscript.com/dashboard) to get a key directly.
+Building an app instead of an agent? The same backend is a plain JSON REST API — see the [Agent Skill repo](https://github.com/tubeagentkit/youtube-transcript-skills) for the full endpoint reference, or the [dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp) to get a key directly.
 
 Base URL: `https://getyoutubetranscript.com/api/v1`
 
@@ -593,8 +593,8 @@ Base URL: `https://getyoutubetranscript.com/api/v1`
 
 ## Connect
 
-- 🌐 **Website:** [getyoutubetranscript.com](https://getyoutubetranscript.com)
-- 🔑 **Dashboard:** [getyoutubetranscript.com/dashboard](https://getyoutubetranscript.com/dashboard)
+- 🌐 **Website:** [getyoutubetranscript.com](https://getyoutubetranscript.com/?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp)
+- 🔑 **Dashboard:** [getyoutubetranscript.com/dashboard](https://getyoutubetranscript.com/dashboard?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp)
 - 🧩 **Agent Skill version:** [tubeagentkit/youtube-transcript-skills](https://github.com/tubeagentkit/youtube-transcript-skills)
 
 ## Disclosure
@@ -603,7 +603,7 @@ getyoutubetranscript.com is an independent product and is not affiliated with or
 
 ## Related projects
 
-Other ways to use the [GetYouTubeTranscript API](https://getyoutubetranscript.com):
+Other ways to use the [GetYouTubeTranscript API](https://getyoutubetranscript.com/?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp):
 
 - [youtube-transcript-api](https://github.com/tubeagentkit/youtube-transcript-api): YouTube Transcript API docs, endpoint reference, OpenAPI spec and examples in curl, Python, JavaScript, Go and PHP
 - [youtube-transcript-api-python](https://github.com/tubeagentkit/youtube-transcript-api-python): YouTube Transcript API SDK for Python
