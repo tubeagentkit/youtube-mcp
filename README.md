@@ -507,6 +507,9 @@ Check the remaining credit balance for your key/account. No parameters.
 | **Free** | $0 | 100 credits on signup | 60 req/min |
 | **Monthly** | $5/month | 1,000 credits/month | 200 req/min |
 | **Annual** | $4.50/mo ($54/yr) | 1,000 credits/month | 300 req/min |
+| **Starter** | $19/month | 7,500 credits/month | 300 req/min |
+| **Pro** | $49/month | 25,000 credits/month | 400 req/min |
+| **Scale** | $99/month | 60,000 credits/month | 600 req/min |
 
 - **1 credit** = 1 successful request. Failed/rate-limited requests don't consume credits.
 - `get_credits` is the only free tool.
