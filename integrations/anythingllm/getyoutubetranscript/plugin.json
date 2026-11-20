@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Mintplex-Labs/anything-llm/refs/heads/master/server/utils/agents/imported-manifest.schema.json",
+  "active": true,
+  "hubId": "getyoutubetranscript",
+  "name": "YouTube Transcript (GetYouTubeTranscript)",
+  "schema": "skill-1.0.0",
+  "version": "1.0.0",
+  "description": "Gets the full transcript of a YouTube video, in any caption language the video has, through the GetYouTubeTranscript API. Use it to summarize, quote or answer questions about a video. Optionally returns timestamps.",
+  "author": "@tubeagentkit",
+  "author_url": "https://github.com/tubeagentkit",
+  "license": "MIT",
+  "setup_args": {
+    "GETYOUTUBETRANSCRIPT_API_KEY": {
+      "type": "string",
+      "required": true,
+      "input": {
+        "type": "text",
+        "default": "",
+        "placeholder": "sk_live_...",
+        "hint": "Your GetYouTubeTranscript API key from https://getyoutubetranscript.com/developers (new accounts get 100 credits)"
+      }
+    }
+  },
+  "examples": [
+    {
+      "prompt": "Summarize this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "call": "{\"video\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\"}"
+    },
+    {
+      "prompt": "Quote what they say about pricing, with timestamps: https://youtu.be/dQw4w9WgXcQ",
+      "call": "{\"video\": \"https://youtu.be/dQw4w9WgXcQ\", \"timestamps\": \"true\"}"
+    },
+    {
+      "prompt": "Get the Spanish captions of dQw4w9WgXcQ",
+      "call": "{\"video\": \"dQw4w9WgXcQ\", \"language\": \"es\"}"
+    }
+  ],
+  "entrypoint": {
+    "file": "handler.js",
+    "params": {
+      "video": {
+        "description": "YouTube video URL (full or short) or the 11-character video ID",
+        "type": "string"
+      },
+      "language": {
+        "description": "Optional caption language code such as en or es; leave empty for the video's default track",
+        "type": "string"
+      },
+      "timestamps": {
+        "description": "Set to true to get one line per caption with its start time in seconds, for quoting",
+        "type": "string"
+      }
+    }
+  },
+  "imported": true
+}
