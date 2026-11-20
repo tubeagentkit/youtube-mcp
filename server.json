@@ -3,7 +3,7 @@
   "name": "com.getyoutubetranscript/youtube-transcript-and-youtube-search",
   "title": "YouTube Transcript + YouTube Search MCP",
   "description": "YouTube transcripts, search, channel browsing, and playlists for AI agents via MCP.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "url": "https://github.com/tubeagentkit/youtube-mcp",
     "source": "github"
@@ -12,7 +12,15 @@
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://getyoutubetranscript.com/api/mcp"
+      "url": "https://getyoutubetranscript.com/api/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer YOUR_API_KEY from getyoutubetranscript.com/developers (optional when the client signs in with OAuth).",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
     }
   ]
 }
