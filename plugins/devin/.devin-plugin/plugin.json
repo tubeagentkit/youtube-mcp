@@ -1,0 +1,26 @@
+{
+  "name": "getyoutubetranscript",
+  "displayName": "GetYouTubeTranscript",
+  "description": "Read YouTube videos as text: full transcripts in any caption language, YouTube search, and channel and playlist data",
+  "shortDescription": "YouTube transcripts and search",
+  "setup": {
+    "notice": "Each successful call uses 1 credit from your GetYouTubeTranscript account; failed calls are free.",
+    "steps": [
+      "Create an API key at getyoutubetranscript.com/developers (new accounts get 100 credits)"
+    ]
+  },
+  "homepage": "https://getyoutubetranscript.com",
+  "repository": "https://github.com/tubeagentkit/youtube-mcp",
+  "logo": "logo.png",
+  "keywords": [
+    "Research"
+  ],
+  "mcpServers": {
+    "getyoutubetranscript": {
+      "url": "https://getyoutubetranscript.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${GETYOUTUBETRANSCRIPT_API_KEY}"
+      }
+    }
+  }
+}
