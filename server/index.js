@@ -285,6 +285,33 @@ server.registerTool(
 );
 
 server.registerTool(
+  "get_video_details",
+  {
+    title: "Get Video Details",
+    description: "Use this when the user asks about a YouTube video's stats or metadata: views, likes, upload date, length, tags, description or thumbnails, or which channel posted it and how many subscribers it has. Does not include what is said in the video: use get_youtube_transcript for that.",
+    inputSchema: { video_url: z.string().describe("YouTube URL (full or short) or an 11-character video ID") },
+    annotations: readOnly,
+  },
+  tool(async ({ video_url }) => json(await apiGet("/video", { v: video_url })))
+);
+
+server.registerTool(
+  "get_video_comments",
+  {
+    title: "Get Video Comments",
+    description: "Use this when the user wants to read what viewers say under a YouTube video: audience questions, complaints, praise or ideas for a follow-up video. Returns one page of top comments (text, author, likes, reply count, age). For more, call again with the same video_url and `continuation` from the previous response; has_more is false on the last page.",
+    inputSchema: {
+      video_url: z.string().describe("YouTube URL (full or short) or an 11-character video ID"),
+      continuation: z.string().optional().describe("continuation_token from the previous page, passed back verbatim"),
+    },
+    annotations: readOnly,
+  },
+  tool(async ({ video_url, continuation }) =>
+    json(await apiGet("/video/comments", continuation ? { v: video_url, continuation } : { v: video_url }))
+  )
+);
+
+server.registerTool(
   "list_playlist_videos",
   {
     title: "List Playlist Videos",

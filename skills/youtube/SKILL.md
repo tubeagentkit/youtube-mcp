@@ -9,7 +9,7 @@ metadata:
 
 # YouTube (getyoutubetranscript.com)
 
-This plugin bundles the hosted `youtube-transcript` MCP server (`https://getyoutubetranscript.com/api/mcp`). Its 13 tools are the only data path for answering the user: do not scrape youtube.com and do not call the REST API directly from this skill. If the user wants code (an app, script, or pipeline that fetches YouTube data), use the `youtube-transcript-api` skill instead.
+This plugin bundles the hosted `youtube-transcript` MCP server (`https://getyoutubetranscript.com/api/mcp`). Its 15 tools are the only data path for answering the user: do not scrape youtube.com and do not call the REST API directly from this skill. If the user wants code (an app, script, or pipeline that fetches YouTube data), use the `youtube-transcript-api` skill instead.
 
 **Authentication.** Connect with OAuth (the client prompts the user to sign in on first use) or send an API key as a Bearer token. If a tool call fails with an auth error, ask the user to finish the sign-in prompt or check their key in the [dashboard](https://getyoutubetranscript.com/dashboard).
 
@@ -29,6 +29,8 @@ This plugin bundles the hosted `youtube-transcript` MCP server (`https://getyout
 - Wants a channel's banner or profile picture → `get_channel_banner`
 - Wants videos similar to one they shared, or asks what to watch next → `get_related_videos`
 - Asks how many dislikes a video has → `get_video_dislikes` (estimates: say so)
+- Asks for a video's views, likes, upload date, tags or description → `get_video_details`
+- Wants to know what viewers say about a video → `get_video_comments` (one page per call; fetch only the pages the task needs)
 - Pastes a playlist link, or wants every video in a series or course → `list_playlist_videos`
 - Asks how many credits are left → `get_credits` (free)
 
@@ -53,6 +55,8 @@ This plugin bundles the hosted `youtube-transcript` MCP server (`https://getyout
 | `get_channel_banner` | 1 credit | `channel` (required) |
 | `get_related_videos` | 1 credit | `video_url` (required) |
 | `get_video_dislikes` | 1 credit | `video_url` (required) |
+| `get_video_details` | 1 credit | `video_url` (required) |
+| `get_video_comments` | 1 credit per page | `video_url` (required), `continuation` (with the same `video_url`) |
 | `list_playlist_videos` | 1 credit per page | `playlist` (URL or ID), `continuation` |
 | `get_credits` | Free | none |
 

@@ -47,6 +47,7 @@ Listing the tools works without a key, but every tool call needs one: without th
 | `list_channel_videos`, `list_channel_playlists`, `list_channel_posts`, `search_channel_videos`, `get_channel_banner` | Channel data |
 | `list_playlist_videos` | Videos in a playlist |
 | `get_related_videos`, `get_video_dislikes` | Videos suggested next to a video, and like/dislike estimates |
+| `get_video_details`, `get_video_comments` | A video's views, likes, upload date and tags, and its top comments |
 | `get_credits` | Your remaining credits |
 
 ## Cost and limits

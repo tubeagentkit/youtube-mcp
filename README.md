@@ -23,7 +23,7 @@
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-4CAF50?style=for-the-badge" alt="MIT License"/></a>
 </p>
 
-Thirteen tools, one hosted endpoint, no local install, for Claude, ChatGPT, Cursor, VS Code, Windsurf, and 15+ other MCP-compatible clients.
+Fifteen tools, one hosted endpoint, no local install, for Claude, ChatGPT, Cursor, VS Code, Windsurf, and 15+ other MCP-compatible clients.
 
 ```
 https://getyoutubetranscript.com/api/mcp
@@ -61,7 +61,7 @@ This repo root is also an [Agent Plugins 1.0.0](https://agent-plugins.org/specif
 ```text
 plugin.json                # plugin manifest
 mcp.json                   # hosted MCP server (streamable-http, OAuth, no key in the file)
-skills/youtube/SKILL.md    # when and how to use the 13 tools
+skills/youtube/SKILL.md    # when and how to use the 15 tools
 ```
 
 In VS Code, run **Chat: Install Plugin From Source** and paste `https://github.com/tubeagentkit/youtube-mcp`. Other clients that support Agent Plugins can point at this repo or a local clone. For Cursor there is a separate [plugin repo](https://github.com/tubeagentkit/youtube-transcript-cursor-plugin).
@@ -293,7 +293,7 @@ The agent calls `get_youtube_transcript` and summarizes the result. If you conne
 
 ## Run locally (stdio)
 
-Prefer a local process? [`server/`](./server) is an open-source stdio MCP server with the same 13 tools, built on the official MCP TypeScript SDK. It calls the public [REST API](https://getyoutubetranscript.com/docs?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp) with your API key.
+Prefer a local process? [`server/`](./server) is an open-source stdio MCP server with the same 15 tools, built on the official MCP TypeScript SDK. It calls the public [REST API](https://getyoutubetranscript.com/docs?utm_source=github&utm_medium=readme&utm_campaign=youtube-mcp) with your API key.
 
 ```sh
 git clone https://github.com/tubeagentkit/youtube-mcp
@@ -342,7 +342,7 @@ Both methods issue a token scoped and audience-bound to this specific MCP server
 
 ## Available Tools
 
-All thirteen tools are exposed automatically once you connect. **1 credit = 1 successful request.** Failed or rate-limited calls never consume credits.
+All fifteen tools are exposed automatically once you connect. **1 credit = 1 successful request.** Failed or rate-limited calls never consume credits.
 
 ### 1. `get_youtube_transcript`
 
@@ -468,7 +468,28 @@ A video's likes, dislikes, star rating and view count. YouTube no longer publish
 
 **Cost:** 1 credit.
 
-### 12. `list_playlist_videos`
+### 12. `get_video_details`
+
+A video's title, description, channel and subscriber count, views, likes, upload date, length, thumbnails and tags. `views` is exact; `likes` and `subscribers` are the rounded labels YouTube shows ("19M").
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `video_url` | string | **required** | YouTube URL (full or short) or an 11-character video ID |
+
+**Cost:** 1 credit.
+
+### 13. `get_video_comments`
+
+A page of a video's top comments: text, commenter, likes, reply count and age. For the next page, call again with the same `video_url` plus `continuation`.
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `video_url` | string | **required** | YouTube URL (full or short) or an 11-character video ID |
+| `continuation` | string | optional | Opaque token from the previous page; send it with the same `video_url` |
+
+**Cost:** 1 credit/page.
+
+### 14. `list_playlist_videos`
 
 Get every video in a YouTube playlist.
 
@@ -479,7 +500,7 @@ Get every video in a YouTube playlist.
 
 **Cost:** 1 credit/page.
 
-### 13. `get_credits` <sub>· **FREE**</sub>
+### 15. `get_credits` <sub>· **FREE**</sub>
 
 Check the remaining credit balance for your key/account. No parameters.
 
@@ -566,13 +587,13 @@ hosted endpoint. The hosted endpoint and the REST API behind both are run by
 getyoutubetranscript.com and are not open source. To check either one yourself:
 
 - **Run the local server's live test** — `GYT_API_KEY=sk_live_... npm test --prefix server`
-  starts `server/index.js` over stdio, lists all 13 tools, and calls the free ones.
+  starts `server/index.js` over stdio, lists all 15 tools, and calls the free ones.
 - **Run [`verify.js`](./verify.js) against the hosted endpoint** — zero dependencies, zero auth required:
   ```sh
   node verify.js
   ```
   It performs the real MCP handshake (`initialize` then `tools/list`) against the live
-  endpoint and prints the server's actual response, including all 13 real tool schemas.
+  endpoint and prints the server's actual response, including all 15 real tool schemas.
   Tool *discovery* is public; only tool *calls* require an API key or OAuth token (see
   [Authentication](#authentication)).
 - **Independently verified by four third-party MCP directories**, each of which connected

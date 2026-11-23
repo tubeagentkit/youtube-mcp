@@ -8,10 +8,10 @@ startCommand:
   type: http
   url: https://getyoutubetranscript.com/api/mcp
   description: >-
-    YouTube transcripts + YouTube search MCP for AI agents. Thirteen tools -
+    YouTube transcripts + YouTube search MCP for AI agents. Fifteen tools -
     transcript extraction, caption languages, video/channel search, channel browsing (uploads, Shorts,
     live streams, playlists, posts, banner), in-channel search, playlist extraction, related videos,
-    estimated dislikes, and a credit balance check. Authenticate via
+    estimated dislikes, video details, video comments, and a credit balance check. Authenticate via
     OAuth 2.1 sign-in or an API key (Bearer token).
 
 metadata:

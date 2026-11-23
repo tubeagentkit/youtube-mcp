@@ -23,6 +23,8 @@ assert.deepEqual(names, [
   "get_credits",
   "get_related_videos",
   "get_transcript_languages",
+  "get_video_comments",
+  "get_video_details",
   "get_video_dislikes",
   "get_youtube_transcript",
   "list_channel_playlists",
@@ -78,6 +80,8 @@ if (process.env.GYT_RUN_PAID_TESTS === "1") {
     ["list_channel_posts", { channel: "@veritasium" }, "posts"],
     ["get_related_videos", { video_url: "ZXsQAXx_ao0" }, "related"],
     ["get_video_dislikes", { video_url: "dQw4w9WgXcQ" }, "dislikes"],
+    ["get_video_details", { video_url: "dQw4w9WgXcQ" }, "views"],
+    ["get_video_comments", { video_url: "dQw4w9WgXcQ" }, "comments"],
     ["get_channel_banner", { channel: "@veritasium" }, "has_banner"],
   ]) {
     const result = await client.callTool({ name, arguments: args });

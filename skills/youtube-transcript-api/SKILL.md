@@ -53,6 +53,8 @@ If the user has no key, set one up in the conversation instead of sending them t
 | `/channel/banner` | `channel` | `banner` (`original`, `largest`, `sizes`), `avatar`, `has_banner` |
 | `/video/related` | `v` | `related`: the videos YouTube suggests next to the video |
 | `/video/dislikes` | `v` | estimated `likes`, `dislikes`, `rating`, `view_count` (`estimated` is always true) |
+| `/video` | `v` | `title`, `description`, `channel`, `views` (exact), `likes` (rounded label), `upload_date`, `duration`, `thumbnails`, `keywords` |
+| `/video/comments` | `v`, plus `continuation` (with the same `v`) for later pages | `comments` (`text`, `channel.handle`, `likes`, `replies`, `published_date`), `has_more`, `continuation_token`; 1 credit per page; 404 `COMMENTS_DISABLED` when comments are off |
 | `/channel/search` | `channel` + `q`, or `continuation` | videos inside one channel matching `q` |
 | `/playlist` | `list` (playlist ID or URL) or `continuation` | `videos`, `has_more`, `continuation_token` |
 | `/resolve` | `handle` | channel ID for an @handle or URL |
