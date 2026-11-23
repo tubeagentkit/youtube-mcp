@@ -38,6 +38,8 @@ assert.deepEqual(names, [
 const transcriptTool = tools.find((t) => t.name === "get_youtube_transcript");
 assert.ok(transcriptTool.inputSchema.properties.timestamps, "get_youtube_transcript should accept timestamps");
 console.log("timestamps input ok");
+assert.ok(transcriptTool.inputSchema.properties.translate, "get_youtube_transcript should accept translate");
+console.log("translate input ok");
 
 const languagesTool = tools.find((t) => t.name === "get_transcript_languages");
 assert.deepEqual(languagesTool.inputSchema.required, ["video_url"], "get_transcript_languages needs only a video");
@@ -62,6 +64,16 @@ if (process.env.GYT_RUN_PAID_TESTS === "1") {
   assert.equal(transcript.isError, undefined, transcript.content[0].text);
   assert.match(transcript.content[0].text, /## Language: en\n## Captions: auto-generated/);
   console.log("get_youtube_transcript metadata ok");
+
+  // 1 credit. Machine translation keeps the timestamps and names the target language.
+  const translated = await client.callTool({
+    name: "get_youtube_transcript",
+    arguments: { video_url: "dQw4w9WgXcQ", timestamps: true, translate: "es" },
+  });
+  assert.equal(translated.isError, undefined, translated.content[0].text);
+  assert.match(translated.content[0].text, /## Translated to: es \(machine translation\)/);
+  assert.match(translated.content[0].text, /^\[0:\d\d\] /m);
+  console.log("get_youtube_transcript translate ok");
 
   // 1 credit.
   const languages = await client.callTool({ name: "get_transcript_languages", arguments: { video_url: "ZXsQAXx_ao0" } });

@@ -83,6 +83,7 @@ function metadataLines(data) {
     `## Author: ${data.author_name}`,
     `## Language: ${data.language_code}${languageNote}`,
     ...(CAPTION_TYPE_LABEL[data.caption_type] ? [`## Captions: ${CAPTION_TYPE_LABEL[data.caption_type]}`] : []),
+    ...(data.translated_to ? [`## Translated to: ${data.translated_to} (machine translation)`] : []),
   ];
 }
 
@@ -139,12 +140,17 @@ server.registerTool(
       language: z.string().optional().describe("Language code, e.g. 'en', 'es'. Defaults to 'en'."),
       send_metadata: z.boolean().optional().describe("Include title/author metadata. Defaults to true."),
       timestamps: z.boolean().optional().describe("One line per caption, each starting with its [m:ss] start time. Defaults to false (one block of text)."),
+      translate: z
+        .string()
+        .regex(/^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$/)
+        .optional()
+        .describe("Language code to machine-translate the transcript into, e.g. 'es', 'zh-CN'. Timestamps stay aligned. Use when the user wants the video's text in another language."),
     },
     annotations: readOnly,
   },
-  tool(async ({ video_url, language, send_metadata, timestamps }) => {
+  tool(async ({ video_url, language, send_metadata, timestamps, translate }) => {
     // The API only adds segments when asked, so default requests are unchanged.
-    const data = await apiGet("/transcript", { v: video_url, language, timestamps: timestamps ? "true" : undefined });
+    const data = await apiGet("/transcript", { v: video_url, language, timestamps: timestamps ? "true" : undefined, translate });
     const body = timestamps && data.segments?.length ? toTimestampedText(data.segments) : data.transcript;
     if (send_metadata === false) return textResult(body);
     return textResult(`# Metadata\n\n${metadataLines(data).join("\n")}\n\n# Transcript\n\n${body}`);
