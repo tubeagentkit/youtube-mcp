@@ -22,6 +22,7 @@ assert.deepEqual(names, [
   "get_channel_latest_videos",
   "get_credits",
   "get_related_videos",
+  "get_transcript_job",
   "get_transcript_languages",
   "get_video_comments",
   "get_video_details",
@@ -40,6 +41,12 @@ assert.ok(transcriptTool.inputSchema.properties.timestamps, "get_youtube_transcr
 console.log("timestamps input ok");
 assert.ok(transcriptTool.inputSchema.properties.translate, "get_youtube_transcript should accept translate");
 console.log("translate input ok");
+assert.deepEqual(transcriptTool.inputSchema.properties.mode.enum, ["native", "generate", "auto"]);
+console.log("mode input ok");
+
+const jobTool = tools.find((t) => t.name === "get_transcript_job");
+assert.deepEqual(jobTool.inputSchema.required, ["job_id"], "get_transcript_job needs only a job_id");
+console.log("get_transcript_job schema ok");
 
 const languagesTool = tools.find((t) => t.name === "get_transcript_languages");
 assert.deepEqual(languagesTool.inputSchema.required, ["video_url"], "get_transcript_languages needs only a video");
@@ -58,6 +65,17 @@ const latest = await client.callTool({ name: "get_channel_latest_videos", argume
 assert.equal(latest.isError, undefined, latest.content[0].text);
 console.log("get_channel_latest_videos ok");
 
+// Free: polling a job is never charged, and an unknown id is a clean tool error.
+const missingJob = await client.callTool({ name: "get_transcript_job", arguments: { job_id: "00000000-0000-4000-8000-000000000000" } });
+assert.equal(missingJob.isError, true);
+assert.match(missingJob.content[0].text, /JOB_NOT_FOUND/);
+console.log("get_transcript_job unknown id ok");
+
+// Free: rejected before any request is made.
+const aiTranslate = await client.callTool({ name: "get_youtube_transcript", arguments: { video_url: "dQw4w9WgXcQ", mode: "auto", translate: "es" } });
+assert.equal(aiTranslate.isError, true);
+console.log("mode with translate rejected ok");
+
 if (process.env.GYT_RUN_PAID_TESTS === "1") {
   // 1 credit. A video with only auto-generated captions, to check the provenance header.
   const transcript = await client.callTool({ name: "get_youtube_transcript", arguments: { video_url: "ZXsQAXx_ao0" } });
@@ -74,6 +92,23 @@ if (process.env.GYT_RUN_PAID_TESTS === "1") {
   assert.match(translated.content[0].text, /## Translated to: es \(machine translation\)/);
   assert.match(translated.content[0].text, /^\[0:\d\d\] /m);
   console.log("get_youtube_transcript translate ok");
+
+  // 3 credits per minute of video, or 0 when this account already made this AI transcript in the last 24 hours.
+  // A long video may answer with a job_id instead; then poll get_transcript_job.
+  const ai = await client.callTool({ name: "get_youtube_transcript", arguments: { video_url: "dQw4w9WgXcQ", mode: "generate", timestamps: true } });
+  assert.equal(ai.isError, undefined, ai.content[0].text);
+  const jobId = ai.content[0].text.match(/job_id: (\S+)/)?.[1];
+  let aiText = ai.content[0].text;
+  for (let i = 0; jobId && i < 60 && !aiText.includes("# Transcript"); i++) {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    const polled = await client.callTool({ name: "get_transcript_job", arguments: { job_id: jobId, timestamps: true } });
+    assert.equal(polled.isError, undefined, polled.content[0].text);
+    aiText = polled.content[0].text;
+  }
+  assert.match(aiText, /## Source: AI speech-to-text transcript/);
+  assert.match(aiText, /## Credits charged by this call: \d+/);
+  assert.match(aiText, /^\[0:\d\d\] /m);
+  console.log("get_youtube_transcript mode=generate ok");
 
   // 1 credit.
   const languages = await client.callTool({ name: "get_transcript_languages", arguments: { video_url: "ZXsQAXx_ao0" } });

@@ -25,8 +25,8 @@ class ApiCallError extends Error {
   }
 }
 
-/** GET an API path, dropping empty params. Returns the response's `data` field. */
-async function apiGet(path, params) {
+/** GET an API path, dropping empty params. Returns the whole JSON body and the credits the call took (X-Credits-Charged). */
+async function apiFetch(path, params) {
   const url = new URL(API_BASE + path);
   for (const [key, value] of Object.entries(params)) {
     if (value !== undefined && value !== null && value !== "") url.searchParams.set(key, String(value));
@@ -50,9 +50,15 @@ async function apiGet(path, params) {
     throw new ApiCallError(`HTTP_${res.status}`, `Unexpected non-JSON response (HTTP ${res.status}).`);
   }
   if (!res.ok || body?.success === false) {
-    throw new ApiCallError(body?.code ?? `HTTP_${res.status}`, body?.message ?? `Request failed (HTTP ${res.status}).`);
+    const needed = body?.credits_required ? ` This request needs ${body.credits_required} credits.` : "";
+    throw new ApiCallError(body?.code ?? `HTTP_${res.status}`, (body?.message ?? `Request failed (HTTP ${res.status}).`) + needed);
   }
-  return body.data;
+  return { body, creditsCharged: Number(res.headers.get("x-credits-charged")) || 0 };
+}
+
+/** GET an API path. Returns the response's `data` field. */
+async function apiGet(path, params) {
+  return (await apiFetch(path, params)).body.data;
 }
 
 /** "1:05", or "1:02:05" past an hour: the same clock YouTube shows, and the same format as the hosted server. */
@@ -85,6 +91,36 @@ function metadataLines(data) {
     ...(CAPTION_TYPE_LABEL[data.caption_type] ? [`## Captions: ${CAPTION_TYPE_LABEL[data.caption_type]}`] : []),
     ...(data.translated_to ? [`## Translated to: ${data.translated_to} (machine translation)`] : []),
   ];
+}
+
+/** Tool text for a caption transcript, with the metadata header unless send_metadata is false. */
+function captionTranscriptText(data, { send_metadata, timestamps }) {
+  const body = timestamps && data.segments?.length ? toTimestampedText(data.segments) : data.transcript;
+  if (send_metadata === false) return body;
+  return `# Metadata\n\n${metadataLines(data).join("\n")}\n\n# Transcript\n\n${body}`;
+}
+
+/**
+ * Tool text for a mode=generate|auto answer, same wording as the hosted server: the transcript when it is ready,
+ * otherwise the job_id to poll with get_transcript_job. In auto mode a video with captions comes back as captions.
+ */
+function aiAnswerText({ body, creditsCharged }, options) {
+  const data = body.data;
+  if (!data) {
+    const job = body.job;
+    return `AI transcript in progress (status: ${job.status}). job_id: ${job.job_id}\nCredits charged: ${job.credits_charged} (refunded automatically if it fails).\nCall get_transcript_job with this job_id in about ${job.poll_interval_seconds} seconds to get the transcript.`;
+  }
+  if (data.source !== "ai") return captionTranscriptText(data, options);
+  const text = options.timestamps && data.segments?.length ? toTimestampedText(data.segments) : data.transcript;
+  if (options.send_metadata === false) return text;
+  const meta = [
+    `## Title: ${data.title}`,
+    `## Author: ${data.author_name}`,
+    `## Language: ${data.language_code}`,
+    "## Source: AI speech-to-text transcript of the audio, not captions (names and technical terms may be misheard)",
+    `## Credits charged by this call: ${creditsCharged}`,
+  ];
+  return `# Metadata\n\n${meta.join("\n")}\n\n# Transcript\n\n${text}`;
 }
 
 function textResult(text) {
@@ -134,7 +170,7 @@ server.registerTool(
   {
     title: "Get YouTube Transcript",
     description:
-      "Use this when the user shares a YouTube video link or ID, or asks to summarize, explain, quote, translate, take notes on, or chat about a specific YouTube video, lecture, podcast, or talk. Returns the full spoken text (captions) as one block, plus the title and channel. Set timestamps to true when the user wants timestamps, wants to find or quote where something is said, or wants a timeline or chapter breakdown: each caption line then starts with its [m:ss] time. Accepts watch, youtu.be, Shorts, and live URLs. Do not use for non-YouTube videos or for files the user uploads. If a video has no captions, this returns an error: tell the user instead of guessing what the video says.",
+      "Use this when the user shares a YouTube video link or ID, or asks to summarize, explain, quote, translate, take notes on, or chat about a specific YouTube video, lecture, podcast, or talk. Returns the full spoken text (captions) as one block, plus the title and channel. Set timestamps to true when the user wants timestamps, wants to find or quote where something is said, or wants a timeline or chapter breakdown: each caption line then starts with its [m:ss] time. Accepts watch, youtu.be, Shorts, and live URLs. Do not use for non-YouTube videos or for files the user uploads. If a video has no captions, this returns an error by default: tell the user instead of guessing what the video says. If the user wants a transcript anyway, call again with mode 'auto' (captions if any, otherwise an AI speech-to-text transcript at 3 credits per minute of video). Long videos may answer with a job_id instead of text: then call get_transcript_job.",
     inputSchema: {
       video_url: z.string().describe("YouTube URL (full or short) or an 11-character video ID"),
       language: z.string().optional().describe("Language code, e.g. 'en', 'es'. Defaults to 'en'."),
@@ -145,15 +181,42 @@ server.registerTool(
         .regex(/^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})?$/)
         .optional()
         .describe("Language code to machine-translate the transcript into, e.g. 'es', 'zh-CN'. Timestamps stay aligned. Use when the user wants the video's text in another language."),
+      mode: z
+        .enum(["native", "generate", "auto"])
+        .optional()
+        .describe("'native' (default): captions only, 1 credit. 'auto': captions if the video has any (1 credit), otherwise an AI speech-to-text transcript of the audio. 'generate': always an AI transcript. AI transcripts cost 3 credits per minute of video (rounded up), up to 4 hours long; with these modes, language is the language spoken (omit it to use the video's own audio language) and translate is not allowed."),
     },
     annotations: readOnly,
   },
-  tool(async ({ video_url, language, send_metadata, timestamps, translate }) => {
+  tool(async ({ video_url, language, send_metadata, timestamps, translate, mode }) => {
     // The API only adds segments when asked, so default requests are unchanged.
-    const data = await apiGet("/transcript", { v: video_url, language, timestamps: timestamps ? "true" : undefined, translate });
-    const body = timestamps && data.segments?.length ? toTimestampedText(data.segments) : data.transcript;
-    if (send_metadata === false) return textResult(body);
-    return textResult(`# Metadata\n\n${metadataLines(data).join("\n")}\n\n# Transcript\n\n${body}`);
+    const ts = timestamps ? "true" : undefined;
+    if (mode === "generate" || mode === "auto") {
+      if (translate) return errorResult("BAD_REQUEST", "translate cannot be combined with mode generate or auto.");
+      const answer = await apiFetch("/transcript", { v: video_url, language, timestamps: ts, mode });
+      return textResult(aiAnswerText(answer, { send_metadata, timestamps }));
+    }
+    const data = await apiGet("/transcript", { v: video_url, language, timestamps: ts, translate });
+    return textResult(captionTranscriptText(data, { send_metadata, timestamps }));
+  })
+);
+
+server.registerTool(
+  "get_transcript_job",
+  {
+    title: "Get AI Transcript Job",
+    description:
+      "Use this when get_youtube_transcript (mode 'auto' or 'generate') answered with a job_id because the AI transcript was still being made. Returns the transcript when the job is done, says it is still running otherwise (wait about 5 seconds and call again), or the error if it failed (credits are refunded then). Free: the credits were taken when the job started. Only jobs started by this account can be read; jobs are kept 7 days.",
+    inputSchema: {
+      job_id: z.string().describe("The job_id returned by get_youtube_transcript."),
+      send_metadata: z.boolean().optional().describe("Include title/author metadata. Defaults to true."),
+      timestamps: z.boolean().optional().describe("One line per segment, each starting with its [m:ss] start time. Defaults to false."),
+    },
+    annotations: readOnly,
+  },
+  tool(async ({ job_id, send_metadata, timestamps }) => {
+    const answer = await apiFetch("/transcript/jobs", { id: job_id.trim(), timestamps: timestamps ? "true" : undefined });
+    return textResult(aiAnswerText(answer, { send_metadata, timestamps }));
   })
 );
 

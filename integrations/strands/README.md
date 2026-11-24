@@ -40,7 +40,8 @@ Listing the tools works without a key, but every tool call needs one: without th
 
 | Tool | What it does |
 | --- | --- |
-| `get_youtube_transcript` | Full transcript of a video, optionally with timestamps, in a chosen caption language, optionally machine-translated |
+| `get_youtube_transcript` | Full transcript of a video, optionally with timestamps, in a chosen caption language, optionally machine-translated. `mode: "auto"` makes an AI speech-to-text transcript when the video has no captions |
+| `get_transcript_job` | Result of an AI transcript that answered with a `job_id` (poll every ~5 s, free) |
 | `get_transcript_languages` | Caption languages a video has |
 | `search_youtube` | Search YouTube videos or channels |
 | `get_channel_latest_videos` | A channel's details and latest uploads |
@@ -52,7 +53,7 @@ Listing the tools works without a key, but every tool call needs one: without th
 
 ## Cost and limits
 
-Most calls cost 1 credit; failed calls (no captions, a private or removed video) and `get_credits` are free. Transcripts come from the captions a video already has, so a video with captions turned off returns no transcript. Pricing: [getyoutubetranscript.com/pricing](https://getyoutubetranscript.com/pricing).
+Most calls cost 1 credit; failed calls (no captions, a private or removed video), `get_credits` and `get_transcript_job` are free. By default transcripts come from the captions a video already has; for a video with captions turned off, pass `mode: "auto"` for an AI transcript at 3 credits per minute of video. Pricing: [getyoutubetranscript.com/pricing](https://getyoutubetranscript.com/pricing).
 
 ## Links
 
