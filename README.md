@@ -21,6 +21,7 @@
   <a href="https://getyoutubetranscript.com"><img src="https://img.shields.io/badge/Website-getyoutubetranscript.com-FF3B00?style=for-the-badge" alt="Website"/></a>
   <a href="https://getyoutubetranscript.com/docs"><img src="https://img.shields.io/badge/Docs-API_Reference-06B6D4?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Docs"/></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-4CAF50?style=for-the-badge" alt="MIT License"/></a>
+  <a href="https://github.com/NipunaRanasinghe/awesome-ai-agents/blob/main/EMERGING.md"><img src="https://img.shields.io/badge/Emerging_in-Awesome_AI_Agents-0969da?style=for-the-badge" alt="Emerging in Awesome AI Agents"/></a>
 </p>
 
 Sixteen tools, one hosted endpoint, no local install, for Claude, ChatGPT, Cursor, VS Code, Windsurf, and 15+ other MCP-compatible clients.
